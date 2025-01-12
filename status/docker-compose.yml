@@ -1,0 +1,28 @@
+services:
+  webapp:
+    build:
+      context: ./webapp/
+      dockerfile: Dockerfile
+    container_name: webapp
+    volumes:
+      - ./data:/data
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - webapp
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
