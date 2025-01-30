@@ -6,10 +6,13 @@ services:
     container_name: webapp
     volumes:
       - ./data:/data
+      - ./secret:/etc/secret
     ports:
       - "5000:5000"
     networks:
       - app-network
+    depends_on:
+      - db
 
   nginx:
     image: nginx:latest
@@ -22,6 +25,22 @@ services:
       - webapp
     networks:
       - app-network
+  
+  db:
+    image: mongo:latest
+    hostname: test_mongodb
+    env_file:
+      - ./secret/mongopass.env
+    container_name: db
+    volumes:
+      - ./mongo/data:/data/db
+      - ./mongo/conf:/data/configdb
+      
+    ports:
+      - 27017:27017
+    networks:
+      - app-network
+    
 
 networks:
   app-network:
